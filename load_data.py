@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 tickers = ["XBI", "IHI", "PPH", "IHF", "XLV", "^VIX"]
 
-data = yf.download(tickers, start="2010-01-01", end="2025-01-01")
+data = yf.download(tickers, start="2010-01-01", end="2025-07-01")
 
 close = data["Close"]
 
