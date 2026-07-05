@@ -58,3 +58,13 @@ print(pricing_window.sum())
 average_by_pricing = returns.groupby(pricing_window).mean()
 
 print(average_by_pricing)
+
+pricing_chart_data = average_by_pricing.drop(columns=["^VIX"])
+
+pricing_chart_data.T.plot(kind="bar")
+
+plt.title("avg daily return : normal vs drug-pricing news")
+plt.ylabel("avg daily return")
+plt.xlabel("etf")
+
+plt.savefig("pricing_chart.png")
