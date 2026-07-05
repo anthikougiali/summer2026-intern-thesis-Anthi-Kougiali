@@ -1,5 +1,6 @@
 import yfinance as yf 
 import pandas as pd
+import matplotlib.pyplot as plt
 
 tickers = ["XBI", "IHI", "PPH", "IHF", "XLV", "^VIX"]
 
@@ -29,3 +30,13 @@ regime = regime.loc[returns.index]
 average_by_regime = returns.groupby(regime).mean()
 
 print(average_by_regime)
+
+average_by_regime = average_by_regime.drop(columns=["^VIX"])
+
+average_by_regime.T.plot(kind="bar")
+
+plt.title("avg daily return: calm vs stressful days")
+plt.ylabel("avg daily return")
+plt.xlabel("etf")
+
+plt.savefig("regime_chart.png")
