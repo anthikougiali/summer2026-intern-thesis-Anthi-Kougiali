@@ -24,6 +24,8 @@ regime = vix_level > vix_median
 print(vix_median)
 print(regime.head())
 
+regime = regime.loc[returns.index]
+
 average_by_regime = returns.groupby(regime).mean()
 
 print(average_by_regime)
