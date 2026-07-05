@@ -40,3 +40,15 @@ plt.ylabel("avg daily return")
 plt.xlabel("etf")
 
 plt.savefig("regime_chart.png")
+
+event = pd.to_datetime("2022-08-16")
+
+start = event - pd.Timedelta(days=5)
+
+end = event + pd.Timedelta(days=20)
+
+pricing_window = pd.Series(False, index=returns.index)
+
+pricing_window[(returns.index >= start) & (returns.index <= end)] = True
+
+print(pricing_window.sum())
