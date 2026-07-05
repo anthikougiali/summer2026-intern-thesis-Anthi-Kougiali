@@ -53,3 +53,7 @@ for event in event_dates:
     pricing_window[(returns.index >= start) & (returns.index <= end)] = True
 
 print(pricing_window.sum())
+
+average_by_pricing = returns.groupby(pricing_window).mean()
+
+print(average_by_pricing)
