@@ -2,6 +2,8 @@ import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
 
+pd.set_option("display.max_columns", None)
+
 tickers = ["XBI", "IHI", "PPH", "IHF", "XLV", "^VIX"]
 
 data = yf.download(tickers, start="2010-01-01", end="2025-07-01")
@@ -22,13 +24,12 @@ vix_median = vix_level.median()
 
 regime = vix_level > vix_median
 
-print(vix_median)
-print(regime.head())
-
 regime = regime.loc[returns.index]
 
 average_by_regime = returns.groupby(regime).mean()
 
+print(vix_median)
+print(regime.head())
 print(average_by_regime)
 
 average_by_regime = average_by_regime.drop(columns=["^VIX"])
