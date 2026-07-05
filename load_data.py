@@ -41,14 +41,15 @@ plt.xlabel("etf")
 
 plt.savefig("regime_chart.png")
 
-event = pd.to_datetime("2022-08-16")
+event_dates = ["2022-08-16", "2023-08-29", "2024-08-15", "2025-01-17"]
 
-start = event - pd.Timedelta(days=5)
-
-end = event + pd.Timedelta(days=20)
+event_dates = pd.to_datetime(event_dates)
 
 pricing_window = pd.Series(False, index=returns.index)
 
-pricing_window[(returns.index >= start) & (returns.index <= end)] = True
+for event in event_dates:
+    start = event - pd.Timedelta(days=5)
+    end = event + pd.Timedelta(days=20)
+    pricing_window[(returns.index >= start) & (returns.index <= end)] = True
 
 print(pricing_window.sum())
