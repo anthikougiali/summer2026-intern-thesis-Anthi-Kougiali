@@ -11,4 +11,6 @@ close = close.dropna()
 
 returns = close.pct_change()
 
+returns = returns.dropna()
+
 print(returns.head())
