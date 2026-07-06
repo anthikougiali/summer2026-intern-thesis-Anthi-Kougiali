@@ -103,3 +103,8 @@ xbi_in = returns["XBI"][pricing_window]
 xbi_out = returns["XBI"][~pricing_window]
 t_stat, p_value = stats.ttest_ind(xbi_in, xbi_out)
 print("XBI p-value:", p_value)
+
+ihi_in = returns["IHI"][pricing_window]
+ihi_out = returns["IHI"][~pricing_window]
+t_stat, p_value = stats.ttest_ind(ihi_in, ihi_out)
+print("IHI p-value:", p_value)
