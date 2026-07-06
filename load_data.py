@@ -124,8 +124,6 @@ xlv_out = returns["XLV"][~pricing_window]
 t_stat, p_value = stats.ttest_ind(xlv_in, xlv_out)
 print("XLV p-value:", p_value)
 
-# --- Significance tests: innovation windows ---
-
 print("--- INNOVATION WINDOWS ---")
 
 xbi_in = returns["XBI"][innovation_window]
