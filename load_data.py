@@ -345,3 +345,35 @@ recent_total = (1 + recent_returns).prod() - 1
 
 print("recent 12 months returns")
 print((recent_total * 100).round(1).sort_values(ascending=False))
+
+#combine the two 
+
+alpha_table = pd.DataFrame({
+    "Survival_Sharpe": sharpe, 
+    "Recent_Return": recent_total * 100
+})
+
+alpha_table = alpha_table.round(2)
+
+print("survival vs alpha")
+print(alpha_table.sort_values("Recent_Return", ascending=False))
+
+#where alpha lives
+
+plt.figure()
+
+plt.scatter(alpha_table["Survival_Sharpe"], alpha_table["Recent_Return_%"], color="teal", s=80)
+
+for ticker in alpha_table.index:
+    plt.annotate(ticker,
+                 (alpha_table.loc[ticker, "Survival_Sharpe"], alpha_table.loc[ticker, "Recent_Return_%"]),
+                 xytext=(5, 5), textcoords="offset points")
+
+plt.axhline(0, color="black", linewidth=0.8)
+plt.axvline(0, color="black", linewidth=0.8)
+
+plt.title("Where Healthcare Alpha Lives: Survival vs Momentum")
+plt.xlabel("Survived Reform Era (Sharpe)  →  better")
+plt.ylabel("Recent 12-Month Return %  →  better")
+
+plt.savefig("alpha_chart.png", bbox_inches="tight")
