@@ -68,3 +68,20 @@ plt.ylabel("avg daily return")
 plt.xlabel("etf")
 
 plt.savefig("pricing_chart.png")
+
+innovation_dates = ["2023-12-08", "2024-01-08", "2024-03-08", "2025-01-13"]
+
+innovation_dates = pd.to_datetime(innovation_dates)
+
+innovation_window = pd.Series(False, index=returns.index)
+
+for event in innovation_dates:
+    start = event - pd.Timedelta(days=5)
+    end = event + pd.Timedelta(days=20)
+    innovation_window[(returns.index >= start) & (returns.index <= end)] = True
+
+print(innovation_window.sum())
+
+average_by_innovation = returns.groupby(innovation_window).mean()
+
+print(average_by_innovation)
