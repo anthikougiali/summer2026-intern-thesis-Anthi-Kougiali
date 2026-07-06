@@ -205,3 +205,14 @@ print("--- CRSP around Casgevy approval ---")
 print("CRSP avg return in window:", crsp_in.mean())
 print("CRSP avg return outside:", crsp_out.mean())
 print("p-value:", p_value)
+
+# check which subsectors survived the regulatory headwind
+
+reform_start = pd.to_datetime("2022-08-16")
+
+reform_returns = returns[returns.index >= reform_start]
+
+reform_returns = reform_returns.drop(columns=["^VIX"])
+
+print("reform era from", reform_returns.index[0].date(), "to", reform_returns.index[-1].date())
+print("number of trading days:", len(reform_returns))
