@@ -123,3 +123,32 @@ xlv_in = returns["XLV"][pricing_window]
 xlv_out = returns["XLV"][~pricing_window]
 t_stat, p_value = stats.ttest_ind(xlv_in, xlv_out)
 print("XLV p-value:", p_value)
+
+# --- Significance tests: innovation windows ---
+
+print("--- INNOVATION WINDOWS ---")
+
+xbi_in = returns["XBI"][innovation_window]
+xbi_out = returns["XBI"][~innovation_window]
+t_stat, p_value = stats.ttest_ind(xbi_in, xbi_out)
+print("XBI p-value:", p_value)
+
+ihi_in = returns["IHI"][innovation_window]
+ihi_out = returns["IHI"][~innovation_window]
+t_stat, p_value = stats.ttest_ind(ihi_in, ihi_out)
+print("IHI p-value:", p_value)
+
+pph_in = returns["PPH"][innovation_window]
+pph_out = returns["PPH"][~innovation_window]
+t_stat, p_value = stats.ttest_ind(pph_in, pph_out)
+print("PPH p-value:", p_value)
+
+ihf_in = returns["IHF"][innovation_window]
+ihf_out = returns["IHF"][~innovation_window]
+t_stat, p_value = stats.ttest_ind(ihf_in, ihf_out)
+print("IHF p-value:", p_value)
+
+xlv_in = returns["XLV"][innovation_window]
+xlv_out = returns["XLV"][~innovation_window]
+t_stat, p_value = stats.ttest_ind(xlv_in, xlv_out)
+print("XLV p-value:", p_value)
