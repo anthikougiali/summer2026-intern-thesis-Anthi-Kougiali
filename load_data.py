@@ -118,3 +118,8 @@ ihf_in = returns["IHF"][pricing_window]
 ihf_out = returns["IHF"][~pricing_window]
 t_stat, p_value = stats.ttest_ind(ihf_in, ihf_out)
 print("IHF p-value:", p_value)
+
+xlv_in = returns["XLV"][pricing_window]
+xlv_out = returns["XLV"][~pricing_window]
+t_stat, p_value = stats.ttest_ind(xlv_in, xlv_out)
+print("XLV p-value:", p_value)
