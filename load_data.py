@@ -179,3 +179,29 @@ hit_rate = wins / total * 100
 
 print("innovation beat pricing in", wins, "of", total, "events")
 print("hit rate:", hit_rate)
+
+#try individual companies instead of etfs
+
+stocks = yf.download(["VRTX", "CRSP", "RXRX"], start="2010-01-01", end="2025-07-01")
+
+stock_close = stocks["Close"]
+
+stock_returns = stock_close.pct_change().dropna()
+
+#casgevy: 2023-12-08
+
+casgevy = pd.to_datetime("2023-12-08")
+start = casgevy - pd.Timedelta(days=5)
+end = casgevy +pd.Timedelta(days=20)
+
+casgevy_window = (stock_returns.index >= start) & (stock_returns.index <= end)
+
+crsp_in = stock_returns["CRSP"][casgevy_window]
+crsp_out = stock_returns["CRSP"][~casgevy_window]
+
+t_stat, p_value = stats.ttest_ind(crsp_in, crsp_out)
+
+print("--- CRSP around Casgevy approval ---")
+print("CRSP avg return in window:", crsp_in.mean())
+print("CRSP avg return outside:", crsp_out.mean())
+print("p-value:", p_value)
