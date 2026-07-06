@@ -108,3 +108,8 @@ ihi_in = returns["IHI"][pricing_window]
 ihi_out = returns["IHI"][~pricing_window]
 t_stat, p_value = stats.ttest_ind(ihi_in, ihi_out)
 print("IHI p-value:", p_value)
+
+pph_in = returns["PPH"][pricing_window]
+pph_out = returns["PPH"][~pricing_window]
+t_stat, p_value = stats.ttest_ind(pph_in, pph_out)
+print("PPH p-value:", p_value)
