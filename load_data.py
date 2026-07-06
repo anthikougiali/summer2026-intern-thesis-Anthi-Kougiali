@@ -285,3 +285,35 @@ for ticker in stock_events:
     t_stat, p_value = stats.ttest_ind(in_window, out_window)
 
     print(ticker, "| in:", round(in_window.mean(), 4), "| out:", round(out_window.mean(), 4), "| p-value:", round(p_value, 4))
+
+    #new method - which subsectors survive regulations 
+
+    reform_start = pd.to_datetime("2022-08-16")
+
+    reform_returns = returns[returns.index >= reform_start]
+
+    reform_returns = reform_returns.drop(columns=["^VIX"])
+
+    print("reform era")
+    print("from", reform_returns.index[0].date(), "to", reform_returns.index[-1].date())
+    print("Trading days:", len(reform_returns))
+
+#rank sub-sectors
+
+total_return = (1 + reform_returns).prod() - 1 
+
+sharpe = reform_returns.mean() / reform_returns.std() * (252 ** 0.5)
+
+cumulative = (1 + reform_returns).cumprod()
+running_max = cumulative.cummax()
+drawdown = (cumulative - running_max) / running_max
+max_drawdown = drawdown.min()
+
+print("total return since reform")
+print((total_return * 100).round(1).sort_values(ascending=False))
+
+print("sharpe")
+print(sharpe.round(2).sort_values(ascending=False))
+
+print("max drawdown")
+print((max_drawdown * 100).round(1).sort_values(ascending=False))
