@@ -317,3 +317,18 @@ print(sharpe.round(2).sort_values(ascending=False))
 
 print("max drawdown")
 print((max_drawdown * 100).round(1).sort_values(ascending=False))
+
+#chart this 
+
+plt.figure()
+
+sharpe_sorted = sharpe.sort_values(ascending=False)
+
+sharpe_sorted.plot(kind="bar", color="teal")
+
+plt.title("Which Sub-Sectors Survived the Regulatory Headwind (2022+)")
+plt.ylabel("Sharpe Ratio (risk-adjusted return)")
+plt.xlabel("Sub-Sector ETF")
+plt.axhline(0, color="black", linewidth=0.8)
+
+plt.savefig("survival_chart.png", bbox_inches="tight")
