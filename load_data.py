@@ -113,3 +113,8 @@ pph_in = returns["PPH"][pricing_window]
 pph_out = returns["PPH"][~pricing_window]
 t_stat, p_value = stats.ttest_ind(pph_in, pph_out)
 print("PPH p-value:", p_value)
+
+ihf_in = returns["IHF"][pricing_window]
+ihf_out = returns["IHF"][~pricing_window]
+t_stat, p_value = stats.ttest_ind(ihf_in, ihf_out)
+print("IHF p-value:", p_value)
