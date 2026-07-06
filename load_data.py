@@ -216,3 +216,31 @@ reform_returns = reform_returns.drop(columns=["^VIX"])
 
 print("reform era from", reform_returns.index[0].date(), "to", reform_returns.index[-1].date())
 print("number of trading days:", len(reform_returns))
+
+#test one stock
+
+one_stock = yf.download("CRSP", start="2010-01-01", end="2025-07-01")
+
+one_close = one_stock["Close"]
+
+one_returns = one_close.pct_change().dropna()
+
+print(one_returns.tail())
+
+#test crsp around casgevvy approval 
+
+crsp_event = pd.to_datetime("2023-12-08")
+
+crsp_start = crsp_event - pd.Timedelta(days=5)
+
+crsp_end = crsp_event + pd.Timedelta(days=20)
+
+crsp_window = (one_returns.index >= crsp_start) & (one_returns.index <= crsp_end)
+
+crsp_in = one_returns["CRSP"][crsp_window]
+
+crsp_out = one_returns["CRSP"][~crsp_window]
+
+print("CRSP in window average:", crsp_in.mean())
+print("CRSP outside average:", crsp_out.mean())
+print("Days in window:", crsp_window.sum())
