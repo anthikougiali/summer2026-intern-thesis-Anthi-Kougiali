@@ -85,3 +85,13 @@ print(innovation_window.sum())
 average_by_innovation = returns.groupby(innovation_window).mean()
 
 print(average_by_innovation)
+
+innovation_chart_data = average_by_innovation.drop(columns=["^VIX"])
+
+innovation_chart_data.T.plot(kind="bar")
+
+plt.title("avg daily return: normal time vs innovation news")
+plt.ylabel("avg daily return")
+plt.xlabel("etf")
+
+plt.savefig("innovation_chart.png")
