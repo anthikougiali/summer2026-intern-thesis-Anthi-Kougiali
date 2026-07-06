@@ -244,3 +244,44 @@ crsp_out = one_returns["CRSP"][~crsp_window]
 print("CRSP in window average:", crsp_in.mean())
 print("CRSP outside average:", crsp_out.mean())
 print("Days in window:", crsp_window.sum())
+
+#check if this is significant
+
+t_stat, p_value = stats.ttest_ind(crsp_in, crsp_out)
+
+print("CRSP p-value:", p_value)
+
+#test more events
+
+stock_events = {
+    "CRSP": "2023-12-08",   # Casgevy approval (innovation)
+    "SRPT": "2023-06-22",   # Elevidys approval - failed endpoint (innovation)
+    "MRK":  "2024-08-15",   # Januvia on IRA negotiated-price list (pricing)
+    "BMY":  "2024-08-15",   # Eliquis on IRA list (pricing)
+    "ABBV": "2024-08-15",   # Imbruvica on IRA list (pricing)
+    "AMGN": "2024-08-15",   # Enbrel on IRA list (pricing)
+}
+
+all_stocks = yf.download(list(stock_events.keys()), start="2015-01-01", end="2025-07-01")
+
+all_stock_close = all_stocks["Close"]
+
+all_stock_returns = all_stock_close.pct_change().dropna()
+
+print("SINGLE-STOCK EVENT TESTS")
+
+for ticker in stock_events:
+    event = pd.to_datetime(stock_events[ticker])
+    start = event - pd.Timedelta(days=5)
+    end = event + pd.Timedelta(days=20)
+
+    stock_data = all_stock_returns[ticker].dropna()
+
+    window = (all_stock_returns.index >= start) & (all_stock_returns.index <= end)
+
+    in_window = all_stock_returns[ticker][window]
+    out_window = all_stock_returns[ticker][~window]
+
+    t_stat, p_value = stats.ttest_ind(in_window, out_window)
+
+    print(ticker, "| in:", round(in_window.mean(), 4), "| out:", round(out_window.mean(), 4), "| p-value:", round(p_value, 4))
