@@ -362,11 +362,11 @@ print(alpha_table.sort_values("Recent_Return", ascending=False))
 
 plt.figure()
 
-plt.scatter(alpha_table["Survival_Sharpe"], alpha_table["Recent_Return_%"], color="teal", s=80)
+plt.scatter(alpha_table["Survival_Sharpe"], alpha_table["Recent_Return"], color="teal", s=80)
 
 for ticker in alpha_table.index:
     plt.annotate(ticker,
-                 (alpha_table.loc[ticker, "Survival_Sharpe"], alpha_table.loc[ticker, "Recent_Return_%"]),
+                 (alpha_table.loc[ticker, "Survival_Sharpe"], alpha_table.loc[ticker, "Recent_Return"]),
                  xytext=(5, 5), textcoords="offset points")
 
 plt.axhline(0, color="black", linewidth=0.8)
