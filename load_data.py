@@ -1,6 +1,7 @@
 import yfinance as yf 
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy import stats
 
 pd.set_option("display.max_columns", None)
 
@@ -95,3 +96,10 @@ plt.ylabel("avg daily return")
 plt.xlabel("etf")
 
 plt.savefig("innovation_chart.png")
+
+print("--- PRICING WINDOWS ---")
+
+xbi_in = returns["XBI"][pricing_window]
+xbi_out = returns["XBI"][~pricing_window]
+t_stat, p_value = stats.ttest_ind(xbi_in, xbi_out)
+print("XBI p-value:", p_value)
