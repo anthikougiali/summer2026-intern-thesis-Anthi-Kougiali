@@ -332,3 +332,16 @@ plt.xlabel("Sub-Sector ETF")
 plt.axhline(0, color="black", linewidth=0.8)
 
 plt.savefig("survival_chart.png", bbox_inches="tight")
+
+#where alpha lives
+
+recent_start = returns.index[-1] - pd.Timedelta(days=365)
+
+recent_returns = returns[returns.index >= recent_start]
+
+recent_returns = recent_returns.drop(columns=["^VIX"])
+
+recent_total = (1 + recent_returns).prod() - 1
+
+print("recent 12 months returns")
+print((recent_total * 100).round(1).sort_values(ascending=False))
