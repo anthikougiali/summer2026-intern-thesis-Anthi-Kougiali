@@ -150,3 +150,32 @@ xlv_in = returns["XLV"][innovation_window]
 xlv_out = returns["XLV"][~innovation_window]
 t_stat, p_value = stats.ttest_ind(xlv_in, xlv_out)
 print("XLV p-value:", p_value)
+
+# new approach 
+
+innovation_basket = returns[["XBI", "IHI"]].mean(axis=1)
+
+pricing_basket = returns[["PPH", "IHF"]].mean(axis=1)
+
+wins = 0 
+total = 0 
+
+for event in innovation_dates: 
+    start = event - pd.Timedelta(days=5)
+    end = event + pd.Timedelta(days=20)
+
+    window_mask = (returns.index>= start) & (returns.index <= end)
+
+    innovation_return = innovation_basket[window_mask].mean()
+    pricing_return = pricing_basket[window_mask].mean()
+
+    total = total + 1 
+    if innovation_return > pricing_return:
+        wins = wins + 1 
+
+    print(event.date(), "innovation:", round(innovation_return, 5), "pricing:", round(pricing_return, 5))
+
+hit_rate = wins / total * 100
+
+print("innovation beat pricing in", wins, "of", total, "events")
+print("hit rate:", hit_rate)
