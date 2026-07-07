@@ -1,3 +1,4 @@
+#import livraries and display settings
 import yfinance as yf 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -5,9 +6,14 @@ from scipy import stats
 
 pd.set_option("display.max_columns", None)
 
+# 5 healthcare sub-sector ETFs + VIX (the market "fear index")
+# XBI=biotech, IHI=med devices, PPH=pharma, IHF=providers, XLV=broad healthcare
+
 tickers = ["XBI", "IHI", "PPH", "IHF", "XLV", "^VIX"]
 
 data = yf.download(tickers, start="2010-01-01", end="2025-07-01")
+
+# Keep closing prices, drop missing rows, turn prices into daily % returns
 
 close = data["Close"]
 
@@ -18,6 +24,9 @@ returns = close.pct_change()
 returns = returns.dropna()
 
 print(returns.head())
+
+# Label each day "calm" or "stressed" using the median VIX,
+# then compare average returns in each regime
 
 vix_level = close["^VIX"]
 
@@ -33,6 +42,8 @@ print(vix_median)
 print(regime.head())
 print(average_by_regime)
 
+#chart 
+
 average_by_regime = average_by_regime.drop(columns=["^VIX"])
 
 average_by_regime.T.plot(kind="bar")
@@ -42,6 +53,9 @@ plt.ylabel("avg daily return")
 plt.xlabel("etf")
 
 plt.savefig("regime_chart.png")
+
+# Mark the days around drug-pricing news events (IRA-related).
+# Window = 5 days before to 20 days after each event.
 
 event_dates = ["2022-08-16", "2023-08-29", "2024-08-15", "2025-01-17"]
 
@@ -56,9 +70,13 @@ for event in event_dates:
 
 print(pricing_window.sum())
 
+#compare returns in and out the window 
+
 average_by_pricing = returns.groupby(pricing_window).mean()
 
 print(average_by_pricing)
+
+#chart: normal days vs drug-pricing-news days
 
 pricing_chart_data = average_by_pricing.drop(columns=["^VIX"])
 
@@ -69,6 +87,8 @@ plt.ylabel("avg daily return")
 plt.xlabel("etf")
 
 plt.savefig("pricing_chart.png")
+
+#same window idea but with innovation news 
 
 innovation_dates = ["2023-12-08", "2024-01-08", "2024-03-08", "2025-01-13"]
 
@@ -87,6 +107,8 @@ average_by_innovation = returns.groupby(innovation_window).mean()
 
 print(average_by_innovation)
 
+#normal days vs innovation news days 
+
 innovation_chart_data = average_by_innovation.drop(columns=["^VIX"])
 
 innovation_chart_data.T.plot(kind="bar")
@@ -97,7 +119,10 @@ plt.xlabel("etf")
 
 plt.savefig("innovation_chart.png")
 
-print("--- PRICING WINDOWS ---")
+# For each ETF, t-test returns INSIDE vs OUTSIDE the pricing windows.
+# p-value < 0.05 would mean the news-window difference is likely real.
+
+print("pricing windows")
 
 xbi_in = returns["XBI"][pricing_window]
 xbi_out = returns["XBI"][~pricing_window]
@@ -124,7 +149,9 @@ xlv_out = returns["XLV"][~pricing_window]
 t_stat, p_value = stats.ttest_ind(xlv_in, xlv_out)
 print("XLV p-value:", p_value)
 
-print("--- INNOVATION WINDOWS ---")
+# Same t-test, but inside vs outside the innovation windows.
+
+print("innovation windows")
 
 xbi_in = returns["XBI"][innovation_window]
 xbi_out = returns["XBI"][~innovation_window]
@@ -151,7 +178,8 @@ xlv_out = returns["XLV"][~innovation_window]
 t_stat, p_value = stats.ttest_ind(xlv_in, xlv_out)
 print("XLV p-value:", p_value)
 
-# new approach 
+# build two baskets - (innovation = XBI+IHI, pricing = PPH+IHF) and, per event,
+# ask which basket won. Score it as a hit rate.
 
 innovation_basket = returns[["XBI", "IHI"]].mean(axis=1)
 
@@ -173,7 +201,7 @@ for event in innovation_dates:
     if innovation_return > pricing_return:
         wins = wins + 1 
 
-    print(event.date(), "innovation:", round(innovation_return, 5), "pricing:", round(pricing_return, 5))
+print(event.date(), "innovation:", round(innovation_return, 5), "pricing:", round(pricing_return, 5))
 
 hit_rate = wins / total * 100
 
@@ -252,6 +280,9 @@ t_stat, p_value = stats.ttest_ind(crsp_in, crsp_out)
 print("CRSP p-value:", p_value)
 
 #test more events
+#   Innovation: CRSP (Casgevy), SRPT (Elevidys - disputed endpoint)
+#   Pricing:    MRK, BMY, ABBV, AMGN (drugs on the first IRA
+#               price-negotiation list, Aug 15 2024)
 
 stock_events = {
     "CRSP": "2023-12-08",   # Casgevy approval (innovation)
@@ -286,19 +317,22 @@ for ticker in stock_events:
 
     print(ticker, "| in:", round(in_window.mean(), 4), "| out:", round(out_window.mean(), 4), "| p-value:", round(p_value, 4))
 
-    #new method - which subsectors survive regulations 
+#new method - which subsectors survive regulations 
 
-    reform_start = pd.to_datetime("2022-08-16")
+reform_start = pd.to_datetime("2022-08-16")
 
-    reform_returns = returns[returns.index >= reform_start]
+reform_returns = returns[returns.index >= reform_start]
 
-    reform_returns = reform_returns.drop(columns=["^VIX"])
+reform_returns = reform_returns.drop(columns=["^VIX"])
 
-    print("reform era")
-    print("from", reform_returns.index[0].date(), "to", reform_returns.index[-1].date())
-    print("Trading days:", len(reform_returns))
+print("reform era")
+print("from", reform_returns.index[0].date(), "to", reform_returns.index[-1].date())
+print("Trading days:", len(reform_returns))
 
 #rank sub-sectors
+#   total_return  = who made money
+#   sharpe        = who made money PER UNIT OF RISK (survival metric)
+#   max_drawdown  = who suffered the worst peak-to-trough crash
 
 total_return = (1 + reform_returns).prod() - 1 
 
@@ -359,6 +393,8 @@ print("survival vs alpha")
 print(alpha_table.sort_values("Recent_Return", ascending=False))
 
 #where alpha lives
+# X = survived reform (Sharpe), Y = recent 12-month return.
+# Top-right quadrant = survivor AND rising = the alpha.
 
 plt.figure()
 
